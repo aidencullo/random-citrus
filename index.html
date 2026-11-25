@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Random Citrus</title>
+  <meta name="description" content="Shake the tree. Get a citrus." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='54' r='36' fill='%23f4a261'/%3E%3Cpath d='M50 18c6 8 4 14 0 18-4-4-6-10 0-18z' fill='%232a9d8f'/%3E%3C/svg%3E" />
+  <style>
+    :root {
+      --rind: #f4a261;
+      --flesh: #e76f51;
+      --pith: #fff3e0;
+      --leaf: #2a9d8f;
+      --ink: #1c1410;
+      --paper: #fff8ef;
+      --shadow: rgba(60, 28, 8, 0.18);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--ink);
+      background:
+        radial-gradient(900px 500px at 15% -10%, color-mix(in srgb, var(--rind) 55%, white), transparent 70%),
+        radial-gradient(700px 420px at 110% 10%, color-mix(in srgb, var(--leaf) 35%, white), transparent 65%),
+        linear-gradient(180deg, #fff6ea 0%, #f3e2cc 100%);
+    }
+
+    main {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 48px 20px 72px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      line-height: 0.9;
+      margin: 0;
+    }
+
+    .kicker {
+      margin: 0 0 8px;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #7a5a42;
+    }
+
+    button {
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      border: 0;
+      background: var(--ink);
+      color: var(--paper);
+      border-radius: 999px;
+      padding: 14px 22px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 10px 24px var(--shadow);
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(1px); }
+
+    .stage {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 28px;
+      background: color-mix(in srgb, var(--paper) 86%, white);
+      border: 1px solid rgba(80, 40, 10, 0.08);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: 0 24px 60px var(--shadow);
+    }
+
+    .fruit-wrap {
+      display: grid;
+      place-items: center;
+      min-height: 280px;
+    }
+
+    .fruit {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 32%, rgba(255,255,255,0.7), transparent 28%),
+        radial-gradient(circle at 50% 58%, var(--flesh) 0 38%, var(--rind) 39% 100%);
+      box-shadow:
+        inset -18px -22px 30px rgba(80, 20, 0, 0.18),
+        0 18px 30px var(--shadow);
+      position: relative;
+      animation: pop 420ms cubic-bezier(.2, 1.4, .4, 1);
+    }
+
+    .fruit::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -18px;
+      width: 14px;
+      height: 28px;
+      background: #6b4a2b;
+      border-radius: 6px;
+      transform: translateX(-50%);
+    }
+
+    .fruit::after {
+      content: "";
+      position: absolute;
+      left: 54%;
+      top: -34px;
+      width: 54px;
+      height: 28px;
+      background: var(--leaf);
+      border-radius: 0 80% 20% 80%;
+      transform: rotate(18deg);
+    }
+
+    .dimple {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.28);
+    }
+
+    h2 {
+      margin: 0 0 6px;
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: -0.03em;
+    }
+
+    .latin {
+      margin: 0 0 16px;
+      color: #7a5a42;
+      font-style: italic;
+    }
+
+    .blurb {
+      font-size: 1.15rem;
+      line-height: 1.45;
+      margin: 0 0 18px;
+    }
+
+    dl {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 8px 12px;
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.92rem;
+    }
+
+    dt { color: #7a5a42; }
+    dd { margin: 0; }
+
+    .meters {
+      display: grid;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .meter span {
+      display: flex;
+      justify-content: space-between;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #7a5a42;
+    }
+
+    .bar {
+      height: 8px;
+      border-radius: 99px;
+      background: rgba(80, 40, 10, 0.08);
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .bar i {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--leaf), var(--rind));
+      border-radius: inherit;
+    }
+
+    footer {
+      margin-top: 22px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: #7a5a42;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.82rem;
+    }
+
+    #log {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    #log button {
+      background: transparent;
+      color: inherit;
+      box-shadow: none;
+      border: 1px solid rgba(80, 40, 10, 0.15);
+      padding: 6px 10px;
+      font-size: 0.75rem;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.86) rotate(-6deg); }
+      to { transform: none; }
+    }
+
+    @media (max-width: 720px) {
+      .stage { grid-template-columns: 1fr; padding: 20px; }
+      header { align-items: start; flex-direction: column; }
+      footer { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <p class="kicker">Grove lottery · Brooklyn edition</p>
+        <h1>Random<br>Citrus</h1>
+      </div>
+      <button id="shake" type="button">Shake the tree</button>
+    </header>
+
+    <section class="stage" aria-live="polite">
+      <div class="fruit-wrap">
+        <div class="fruit" id="fruit" aria-hidden="true"></div>
+      </div>
+      <article>
+        <h2 id="name">Meyer Lemon</h2>
+        <p class="latin" id="latin">Citrus × meyeri</p>
+        <p class="blurb" id="blurb">A backyard lemon that forgot to be sour.</p>
+        <dl>
+          <dt>Origin</dt><dd id="origin">—</dd>
+          <dt>Best with</dt><dd id="best">—</dd>
+          <dt>Peel</dt><dd id="peel">—</dd>
+          <dt>Today's lot</dt><dd id="lot">—</dd>
+        </dl>
+        <div class="meters" id="meters"></div>
+      </article>
+    </section>
+
+    <footer>
+      <div>Press space to pick again. Dummy fruit, real zest.</div>
+      <div id="log"></div>
+    </footer>
+  </main>
+
+  <script>
+    const grove = [
+      { name: "Meyer Lemon", latin: "Citrus × meyeri", rind: "#f6c445", flesh: "#f4a261", leaf: "#3a9b62", origin: "China, then every California backyard", taste: "Honeyed and floral, with the sharp edges sanded off.", best: "curd, roast chicken, a serious gin and tonic", peel: "thin, fragrant, almost edible" },
+      { name: "Key Lime", latin: "Citrus × aurantiifolia", rind: "#c6d64a", flesh: "#d6e27a", leaf: "#2f8f4e", origin: "Southeast Asia, famous in the Florida Keys", taste: "Tart, aromatic, and a little perfume-y.", best: "pie that is not green from dye", peel: "small, thin, stubborn" },
+      { name: "Blood Orange", latin: "Citrus × sinensis", rind: "#e07a3d", flesh: "#9b2335", leaf: "#2a7a55", origin: "Sicily, when the nights get cold", taste: "Orange, raspberry, and a hint of wine cellar.", best: "salads, campari, anything that wants drama", peel: "bright outside, scandal inside" },
+      { name: "Yuzu", latin: "Citrus junos", rind: "#e7c15a", flesh: "#f0d48a", leaf: "#3d8f62", origin: "East Asia, worshipped in winter kitchens", taste: "Grapefruit's cousin who studied floral arrangement.", best: "ponzu, kosho, a very cold bath", peel: "bumpy, oily, the whole point" },
+      { name: "Pomelo", latin: "Citrus maxima", rind: "#f2d27a", flesh: "#f7b6c8", leaf: "#2f7d52", origin: "Southeast Asia, ancestor of the grapefruit", taste: "Mild, floral, and surprisingly polite for its size.", best: "salads with chili and mint", peel: "a suitcase of pith" },
+      { name: "Grapefruit", latin: "Citrus × paradisi", rind: "#f3b24a", flesh: "#ef6b6b", leaf: "#347a49", origin: "Barbados, a pomelo accident", taste: "Bitter, juicy, and slightly argumentative.", best: "breakfast, or a paloma if breakfast failed", peel: "thick, yellow, confident" },
+      { name: "Clementine", latin: "Citrus × clementina", rind: "#f08a2a", flesh: "#ff8c42", leaf: "#2e8a46", origin: "North Africa, lunchbox royalty", taste: "Sweet, easy, gone in four segments.", best: "a coat pocket in November", peel: "loose, fragrant, satisfying" },
+      { name: "Kumquat", latin: "Citrus japonica", rind: "#f0a020", flesh: "#f6c56b", leaf: "#3a9148", origin: "China, eaten whole on purpose", taste: "Sweet peel, sour center, no negotiations.", best: "sliced into salads or marmalade", peel: "the edible part, somehow" },
+      { name: "Bergamot", latin: "Citrus bergamia", rind: "#d9c15a", flesh: "#e7d27a", leaf: "#2f7d58", origin: "Calabria, the ghost in Earl Grey", taste: "Floral, bitter, and a little cologne.", best: "tea, marmalade, perfume you can drink", peel: "oil-rich and famous" },
+      { name: "Buddha's Hand", latin: "Citrus medica var. sarcodactylis", rind: "#f0d36a", flesh: "#f6e2a0", leaf: "#3c8a55", origin: "Northeast India and China", taste: "All zest, no juice. A fruit that became a sculpture.", best: "infusions, candied fingers, a centerpiece", peel: "the entire personality" },
+      { name: "Calamansi", latin: "Citrus × microcarpa", rind: "#e39a2e", flesh: "#f2c14d", leaf: "#2d8a4a", origin: "The Philippines", taste: "Lime's smaller, sharper, more devoted sibling.", best: "pancit, soy dipping sauce, calamansi soda", peel: "thin, tiny, abundant" },
+      { name: "Finger Lime", latin: "Citrus australasica", rind: "#6f8f4a", flesh: "#d4e07a", leaf: "#245c38", origin: "Australian rainforest", taste: "Citrus caviar. The vesicles pop like a prank.", best: "oysters, cocktails, showing off", peel: "narrow, sometimes almost black" },
+      { name: "Sudachi", latin: "Citrus sudachi", rind: "#c9d24a", flesh: "#dce07a", leaf: "#2f7a45", origin: "Tokushima, Japan", taste: "Green, bright, and cleaner than a lime.", best: "matsutake, grilled fish, soda", peel: "small and aromatic" },
+      { name: "Ugli Fruit", latin: "Citrus reticulata × paradisi", rind: "#d7a13a", flesh: "#f0a060", leaf: "#3a7d48", origin: "Jamaica, named by someone honest", taste: "Tangelo sweetness with grapefruit's edge.", best: "eating over the sink", peel: "loose, wrinkled, unbothered" },
+      { name: "Citron", latin: "Citrus medica", rind: "#f1d36b", flesh: "#f7e7b0", leaf: "#3d8a52", origin: "one of the original citrus, from Asia", taste: "Thick rind, little juice, enormous history.", best: "etrog, candied peel, Sukkot", peel: "most of the fruit" },
+      { name: "Satsuma", latin: "Citrus unshiu", rind: "#ef7d2a", flesh: "#ff9a45", leaf: "#2f8644", origin: "Japan, seedless and cold-hardy", taste: "Mild, sweet, and easy to peel in gloves.", best: "winter desks and coat pockets", peel: "puffy and generous" },
+      { name: "Kabosu", latin: "Citrus sphaerocarpa", rind: "#d2c84a", flesh: "#e4d56a", leaf: "#317848", origin: "Ōita Prefecture, Japan", taste: "Aromatic, less sour than yuzu, very specific.", best: "grilled meat and hot pot", peel: "smooth and green-gold" },
+      { name: "Rangpur Lime", latin: "Citrus × limonia", rind: "#e07a28", flesh: "#ef5a3c", leaf: "#2c7a46", origin: "a mandarin-citron cross from South Asia", taste: "Looks like a tangerine, tastes like a lime with opinions.", best: "marmalade and gin", peel: "orange, misleading" }
+    ];
+
+    const meters = [
+      ["Sweetness", 20, 96],
+      ["Acid", 25, 98],
+      ["Zest oil", 30, 99],
+      ["Pith drama", 5, 97]
+    ];
+
+    const fruitEl = document.querySelector("#fruit");
+    const nameEl = document.querySelector("#name");
+    const latinEl = document.querySelector("#latin");
+    const blurbEl = document.querySelector("#blurb");
+    const originEl = document.querySelector("#origin");
+    const bestEl = document.querySelector("#best");
+    const peelEl = document.querySelector("#peel");
+    const lotEl = document.querySelector("#lot");
+    const metersEl = document.querySelector("#meters");
+    const logEl = document.querySelector("#log");
+    const shakeBtn = document.querySelector("#shake");
+
+    let last = -1;
+    const recent = [];
+
+    function rand(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function lotCode(fruit) {
+      const day = new Date();
+      const stamp = `${day.getMonth() + 1}${day.getDate()}`;
+      return `${fruit.name.slice(0, 3).toUpperCase()}-${stamp}-${rand(100, 999)}`;
+    }
+
+    function paint(fruit) {
+      document.documentElement.style.setProperty("--rind", fruit.rind);
+      document.documentElement.style.setProperty("--flesh", fruit.flesh);
+      document.documentElement.style.setProperty("--leaf", fruit.leaf);
+      fruitEl.innerHTML = "";
+      fruitEl.style.animation = "none";
+      fruitEl.offsetWidth;
+      fruitEl.style.animation = "";
+      for (let i = 0; i < 14; i++) {
+        const dot = document.createElement("span");
+        dot.className = "dimple";
+        dot.style.left = `${rand(22, 78)}%`;
+        dot.style.top = `${rand(24, 78)}%`;
+        fruitEl.appendChild(dot);
+      }
+    }
+
+    function pick(index) {
+      const i = typeof index === "number" ? index : (() => {
+        let n = rand(0, grove.length - 1);
+        if (grove.length > 1) while (n === last) n = rand(0, grove.length - 1);
+        return n;
+      })();
+      last = i;
+      const fruit = grove[i];
+      paint(fruit);
+      nameEl.textContent = fruit.name;
+      latinEl.textContent = fruit.latin;
+      blurbEl.textContent = fruit.taste;
+      originEl.textContent = fruit.origin;
+      bestEl.textContent = fruit.best;
+      peelEl.textContent = fruit.peel;
+      lotEl.textContent = lotCode(fruit);
+      document.title = `${fruit.name} · Random Citrus`;
+
+      metersEl.innerHTML = meters.map(([label, min, max]) => {
+        const value = rand(min, max);
+        return `<div class="meter"><span><b>${label}</b><b>${value}</b></span><div class="bar"><i style="width:${value}%"></i></div></div>`;
+      }).join("");
+
+      if (!recent.includes(fruit.name)) recent.unshift(fruit.name);
+      recent.splice(5);
+      logEl.innerHTML = recent.map((name) => {
+        const idx = grove.findIndex((item) => item.name === name);
+        return `<button type="button" data-index="${idx}">${name}</button>`;
+      }).join("");
+    }
+
+    shakeBtn.addEventListener("click", () => pick());
+    logEl.addEventListener("click", (event) => {
+      const button = event.target.closest("button");
+      if (!button) return;
+      pick(Number(button.dataset.index));
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.code === "Space" && event.target === document.body) {
+        event.preventDefault();
+        pick();
+      }
+    });
+
+    pick();
+  </script>
+</body>
+</html>
